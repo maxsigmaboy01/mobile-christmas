@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my Christmas Present? 🎁</title>
+    <style>
+        /* --- 1. Base Styles for Mobile-First --- */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* ใช้ min-height เพื่อให้ยืดหยุ่น */
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 20px; /* เพิ่ม padding รอบด้านป้องกันติดขอบ */
+            box-sizing: border-box;
+        }
+
+        .header-container {
+            margin-bottom: 5vh; /* ใช้หน่วย vh เพื่อความยืดหยุ่นตามขนาดจอ */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        #reindeerGif {
+            width: 120px; /* ปรับขนาด GIF ให้เล็กลงสำหรับมือถือ */
+            max-width: 30vw; /* จำกัดขนาดไม่ให้ใหญ่เกินไป */
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #c0392b;
+            font-size: 2em; /* ปรับขนาด h1 ให้เล็กลงสำหรับมือถือ */
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            max-width: 90%; /* จำกัดความกว้างไม่ให้ล้นจอ */
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column; /* เรียงปุ่มแนวตั้งบนมือถือ */
+            gap: 20px;
+            width: 90%; /* ให้ container ปุ่มกว้างขึ้น */
+            max-width: 400px;
+        }
+
+        /* --- 2. Button Styles --- */
+        #yesButton, #noButton {
+            color: white;
+            border: none;
+            border-radius: 12px; /* เพิ่มความโค้งมนให้ดูน่าสัมผัส */
+            font-size: 1.2em; /* ขนาดตัวอักษรเริ่มต้น */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            width: 100%; /* ให้ปุ่มเต็มความกว้างของ .buttons container */
+            min-height: 60px; /* เพิ่มความสูงของปุ่มให้กดง่ายบนจอสัมผัส */
+            white-space: normal; /* อนุญาตให้ข้อความขึ้นบรรทัดใหม่ได้ */
+        }
+
+        #yesButton {
+            background-color: #27ae60;
+        }
+
+        #noButton {
+            background-color: #e74c3c;
+        }
+
+        #yesButton:hover {
+            background-color: #2ecc71;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        #noButton:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* --- 3. Media Query สำหรับหน้าจอที่ใหญ่ขึ้น (เช่น Tablet/Desktop) --- */
+        @media (min-width: 600px) {
+            h1 {
+                font-size: 3em; /* คืนขนาด h1 ให้ใหญ่ขึ้นเมื่อเป็น Desktop */
+            }
+            #reindeerGif {
+                width: 150px;
+            }
+            .buttons {
+                flex-direction: row; /* กลับไปเรียงปุ่มแนวนอน */
+                width: auto;
+                max-width: none;
+            }
+            #yesButton, #noButton {
+                width: auto;
+                min-width: 150px;
+                font-size: 1.5em; /* คืนขนาดตัวอักษรเริ่มต้น */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <img id="reindeerGif" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2pqZG1xaTFjM2RsOHVyeGNlZXQ0ZwhyZGc2M2puNzU2MzkwZHZtdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tH0sYfpydLzFoaW5LE/giphy.gif" alt="Christmas Reindeer"> 
+        <h1>Will you be my Christmas Present? 🎁</h1>
+    </div>
+
+    <div class="buttons">
+        <button id="yesButton" onclick="handleYes()">Yes</button>
+        <button id="noButton" onclick="handleNo()">No</button>
+    </div>
+
+    <script>
+        const noMessages = [
+            "Are you sure?",
+            "Really sure?",
+            "Last chance!",
+            "Think about it...",
+            "Don't do this to me!",
+            "Are you ABSOLUTELY certain?"
+        ];
+        
+        let noClickCount = 0;
+        // ใช้หน่วย vw สำหรับขนาดตัวอักษรเริ่มต้น เพื่อให้ยืดหยุ่นตามความกว้างหน้าจอ
+        let yesFontSize = 4; // ขนาดเริ่มต้นของปุ่ม Yes (vmin)
+        const noButton = document.getElementById('noButton');
+        const yesButton = document.getElementById('yesButton');
+
+        function handleNo() {
+            if (noClickCount < noMessages.length) {
+                // 1. ปุ่ม Yes ใหญ่ขึ้น
+                yesFontSize += 0.8; // เพิ่มขนาดให้ใหญ่ขึ้น
+                yesButton.style.fontSize = yesFontSize + 'vmin'; // ใช้ vmin เพื่อให้ขนาดอ้างอิงจากขนาดหน้าจอ
+                
+                // 2. เปลี่ยนข้อความปุ่ม No
+                noButton.textContent = noMessages[noClickCount];
+                
+                noClickCount++;
+            } else {
+                // 3. ปุ่ม No หายไป
+                noButton.style.display = 'none';
+
+                // 4. เปลี่ยนข้อความปุ่ม Yes
+                yesButton.textContent = "Please say YES!";
+                
+                // ให้ปุ่ม Yes ยังคงใหญ่ขึ้นไปอีกหน่อย 
+                yesFontSize += 0.8; 
+                yesButton.style.fontSize = yesFontSize + 'vmin';
+                yesButton.style.padding = '30px 40px'; // เพิ่ม padding คงที่เมื่อปุ่ม No หายไป
+            }
+        }
+
+        function handleYes() {
+            alert("YES! That's the best Christmas present ever! ❤️");
+            // เปลี่ยนหน้าจอเป็นข้อความแสดงความยินดี
+            document.body.innerHTML = '<h1>MERRY CHRISTMAS! You made my day! 🥰</h1>';
+            // ไม่ต้องซ่อน GIF เพราะเราแทนที่ body.innerHTML ไปแล้ว
+        }
+    </script>
+
+</body>
+</html>
